@@ -30,8 +30,6 @@ CREATE TABLE price_snapshot (
                                 snapshot_date DATE NOT NULL,
                                 current_price DECIMAL(19,4) NOT NULL,
                                 currency VARCHAR(10) DEFAULT 'USD',
-                                source VARCHAR(50) NOT NULL DEFAULT 'YAHOO_FINANCE',
-                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                 CONSTRAINT uk_symbol_snapshot UNIQUE (symbol, snapshot_date)
 );
 

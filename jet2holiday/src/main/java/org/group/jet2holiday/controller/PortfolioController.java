@@ -71,7 +71,7 @@ public class PortfolioController {
     private Account getCurrentAccount() {
         return accountRepository.findAll().stream()
                 .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("No portfolio account found"));
+                .orElseGet(() -> accountRepository.save(new Account()));
     }
 
     private PortfolioItemResponse toResponse(PortfolioItem item) {

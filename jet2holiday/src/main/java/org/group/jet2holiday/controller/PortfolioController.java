@@ -12,13 +12,8 @@ import org.group.jet2holiday.exception.ResourceNotFoundException;
 import org.group.jet2holiday.repository.AccountRepository;
 import org.group.jet2holiday.repository.PortfolioItemRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/portfolio-items")
@@ -42,13 +37,15 @@ public class PortfolioController {
     }
 
     @GetMapping("/{id}")
-    public PortfolioItemResponse getPortfolioItem(@PathVariable Long id) {
+    public PortfolioItemResponse getPortfolioItem(@PathVariable("id") Long id) {
         Account account = getCurrentAccount();
         PortfolioItem item = portfolioItemRepository.findById(id)
                 .filter(pi -> pi.getAccount().getId().equals(account.getId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Portfolio item not found"));
         return toResponse(item);
     }
+
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -65,6 +62,35 @@ public class PortfolioController {
 
         PortfolioItem saved = portfolioItemRepository.save(item);
         return toResponse(saved);
+    }
+
+    @PutMapping("/{id}")
+    public PortfolioItemResponse updatePortfolioItem(@PathVariable("id") Long id, @RequestBody PortfolioItemRequest portfolioDetail) {
+        Account account = getCurrentAccount();
+//        PortfolioItem item = portfolioItemRepository.findById(id)
+//                .filter(pi -> pi.getAccount().getId().equals(account.getId()))
+//                .orElseThrow(() -> new ResourceNotFoundException("Portfolio item not found"));
+        PortfolioItem item = portfolioItemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio item not found with id: " + id));
+
+        item.setSymbol(portfolioDetail.symbol());
+        item.setCompanyName(portfolioDetail.companyName());
+        item.setAssetType(portfolioDetail.assetType());
+        item.setShares(portfolioDetail.shares());
+        item.setCostBasis(portfolioDetail.costBasis());
+        item.setCurrency(portfolioDetail.currency());
+
+        PortfolioItem updated = portfolioItemRepository.save(item);
+        return toResponse(updated);
+    }
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deletePortfolioItem(@PathVariable("id") Long id) {
+        Account account = getCurrentAccount();
+        PortfolioItem item = portfolioItemRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Portfolio item not found with id: " + id));
+
+        portfolioItemRepository.delete(item);
     }
 
     // default MVP assumption: use the first account seeded in the system

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="95339457-5fdc-48ea-9dca-b49167f2e389" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.ask2agent.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jet2holiday.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/config/DataInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/controller/AccountController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/config/CorsConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/repository/AccountRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/repository/AccountRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/resources/application.properties" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="christine" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="3Bh14D6eC9zrd3TNpCByOVo3XGG" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Jet2holidayApplication.executor": "Run",
+    "JUnit.Jet2holidayApplicationTests.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "Merging liping",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/lpmen/jet2holiday",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "project.propCompiler"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="Jet2holidayApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="org.group.jet2holiday.Jet2holidayApplication" />
+      <module name="jet2holiday" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.group.jet2holiday.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Jet2holidayApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="95339457-5fdc-48ea-9dca-b49167f2e389" name="Changes" comment="" />
+      <created>1774926295114</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1774926295114</updated>
+    </task>
+    <servers />
+  </component>
+</project>

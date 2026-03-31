@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="95339457-5fdc-48ea-9dca-b49167f2e389" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/controller/PortfolioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/controller/PortfolioController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

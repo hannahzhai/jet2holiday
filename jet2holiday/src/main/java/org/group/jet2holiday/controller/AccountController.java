@@ -1,11 +1,13 @@
 package org.group.jet2holiday.controller;
+
+import jakarta.validation.Valid;
+import org.group.jet2holiday.dto.account.AccountResponse;
+import org.group.jet2holiday.dto.account.UpdateCashBalanceRequest;
+import org.group.jet2holiday.dto.account.UpdateCashBalanceResponse;
 import org.group.jet2holiday.entity.Account;
+import org.group.jet2holiday.exception.ResourceNotFoundException;
 import org.group.jet2holiday.repository.AccountRepository;
 import org.springframework.web.bind.annotation.*;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/account")
@@ -19,29 +21,33 @@ public class AccountController {
 
     // GET /api/account/{id}
     @GetMapping("/{id}")
-    public Account getAccount(@PathVariable Long id) {
-        return accountRepository.findById(id).orElseThrow();
+    public AccountResponse getAccount(@PathVariable Long id) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
+        return toResponse(account);
     }
 
     // PUT /api/account/{id}/cash-balance
     @PutMapping("/{id}/cash-balance")
-    public Map<String, Object> updateBalance(
+    public UpdateCashBalanceResponse updateBalance(
             @PathVariable Long id,
-            @RequestBody Map<String, Object> body
+            @Valid @RequestBody UpdateCashBalanceRequest request
     ) {
-        // 从 JSON body 读取 amount
-        BigDecimal amount = new BigDecimal(body.get("amount").toString());
-
         Account account = accountRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new ResourceNotFoundException("Account not found with id: " + id));
 
-        account.setCashBalance(amount);
+        account.setCashBalance(request.getAmount());
         accountRepository.save(account);
 
-        Map<String, Object> result = new HashMap<>();
-        result.put("accountId", id);
-        result.put("cashBalance", amount);
-        result.put("message", "Cash balance updated");
-        return result;
+        return new UpdateCashBalanceResponse(id, request.getAmount(), "Cash balance updated");
+    }
+
+    private AccountResponse toResponse(Account account) {
+        return new AccountResponse(
+                account.getId(),
+                account.getAccountName(),
+                account.getCashBalance(),
+                account.getCurrency()
+        );
     }
 }

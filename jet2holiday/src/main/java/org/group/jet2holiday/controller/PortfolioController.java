@@ -1,18 +1,15 @@
 package org.group.jet2holiday.controller;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.List;
+import org.group.jet2holiday.dto.portfolio.PortfolioItemRequest;
+import org.group.jet2holiday.dto.portfolio.PortfolioItemResponse;
 import org.group.jet2holiday.entity.Account;
 import org.group.jet2holiday.entity.PortfolioItem;
 import org.group.jet2holiday.exception.ResourceNotFoundException;
 import org.group.jet2holiday.repository.AccountRepository;
 import org.group.jet2holiday.repository.PortfolioItemRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -54,41 +51,44 @@ public class PortfolioController {
         Account account = getCurrentAccount();
         PortfolioItem item = new PortfolioItem();
         item.setAccount(account);
-        item.setSymbol(request.symbol());
-        item.setCompanyName(request.companyName());
-        item.setAssetType(request.assetType());
-        item.setShares(request.shares());
-        item.setCostBasis(request.costBasis());
-        item.setCurrency(request.currency());
+        item.setSymbol(request.getSymbol());
+        item.setCompanyName(request.getCompanyName());
+        item.setAssetType(request.getAssetType());
+        item.setShares(request.getShares());
+        item.setCostBasis(request.getCostBasis());
+        item.setCurrency(request.getCurrency());
 
         PortfolioItem saved = portfolioItemRepository.save(item);
         return toResponse(saved);
     }
 
     @PutMapping("/{id}")
-    public PortfolioItemResponse updatePortfolioItem(@PathVariable("id") Long id, @RequestBody PortfolioItemRequest portfolioDetail) {
+    public PortfolioItemResponse updatePortfolioItem(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody PortfolioItemRequest request
+    ) {
         Account account = getCurrentAccount();
-//        PortfolioItem item = portfolioItemRepository.findById(id)
-//                .filter(pi -> pi.getAccount().getId().equals(account.getId()))
-//                .orElseThrow(() -> new ResourceNotFoundException("Portfolio item not found"));
         PortfolioItem item = portfolioItemRepository.findById(id)
+                .filter(pi -> pi.getAccount().getId().equals(account.getId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Portfolio item not found with id: " + id));
 
-        item.setSymbol(portfolioDetail.symbol());
-        item.setCompanyName(portfolioDetail.companyName());
-        item.setAssetType(portfolioDetail.assetType());
-        item.setShares(portfolioDetail.shares());
-        item.setCostBasis(portfolioDetail.costBasis());
-        item.setCurrency(portfolioDetail.currency());
+        item.setSymbol(request.getSymbol());
+        item.setCompanyName(request.getCompanyName());
+        item.setAssetType(request.getAssetType());
+        item.setShares(request.getShares());
+        item.setCostBasis(request.getCostBasis());
+        item.setCurrency(request.getCurrency());
 
         PortfolioItem updated = portfolioItemRepository.save(item);
         return toResponse(updated);
     }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePortfolioItem(@PathVariable("id") Long id) {
         Account account = getCurrentAccount();
         PortfolioItem item = portfolioItemRepository.findById(id)
+                .filter(pi -> pi.getAccount().getId().equals(account.getId()))
                 .orElseThrow(() -> new ResourceNotFoundException("Portfolio item not found with id: " + id));
 
         portfolioItemRepository.delete(item);
@@ -111,26 +111,5 @@ public class PortfolioController {
                 item.getCostBasis(),
                 item.getCurrency()
         );
-    }
-
-    public record PortfolioItemRequest(
-            @NotBlank String symbol,
-            @NotBlank String companyName,
-            @NotBlank String assetType,
-            @NotNull @DecimalMin(value = "0.00000001", inclusive = false) BigDecimal shares,
-            @NotNull @DecimalMin(value = "0.0001", inclusive = false) BigDecimal costBasis,
-            @NotBlank String currency
-    ) {
-    }
-
-    public record PortfolioItemResponse(
-            Long id,
-            String symbol,
-            String companyName,
-            String assetType,
-            BigDecimal shares,
-            BigDecimal costBasis,
-            String currency
-    ) {
     }
 }

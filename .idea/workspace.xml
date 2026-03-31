@@ -5,7 +5,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="95339457-5fdc-48ea-9dca-b49167f2e389" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/controller/PortfolioController.java" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/controller/PortfolioController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.ask2agent.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jet2holiday.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/config/DataInitializer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/controller/AccountController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/config/CorsConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/repository/AccountRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/repository/AccountRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,9 +32,9 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="3Bh14D6eC9zrd3TNpCByOVo3XGG" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -33,7 +45,7 @@
     "Application.Jet2holidayApplication.executor": "Run",
     "JUnit.Jet2holidayApplicationTests.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "liping",
+    "git-widget-placeholder": "Merging liping",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/lpmen/jet2holiday",
     "project.structure.last.edited": "Project",

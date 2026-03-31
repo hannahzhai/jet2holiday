@@ -5,24 +5,27 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="95339457-5fdc-48ea-9dca-b49167f2e389" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.ask2agent.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jet2holiday.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/config/DataInitializer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/controller/AccountController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/config/CorsConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/config/CorsConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/repository/AccountRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/java/org/group/jet2holiday/repository/AccountRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jet2holiday/src/test/java/org/group/jet2holiday/controller/AccountControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jet2holiday/src/test/java/org/group/jet2holiday/controller/PortfolioControllerTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jet2holiday/src/test/java/org/group/jet2holiday/repository/AccountRepositoryTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/jet2holiday/src/test/java/org/group/jet2holiday/repository/PortfolioItemRepositoryTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/MarsCodeWorkspaceAppSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/MarsCodeWorkspaceAppSettings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/jet2holiday/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/jet2holiday/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/jet2holiday/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JUnit5 Test Class" />
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -42,19 +45,34 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Jet2holidayApplication.executor": "Run",
+    "Application.Jet2holidayApplication.executor": "Debug",
+    "JUnit.AccountControllerTest.executor": "Run",
+    "JUnit.AccountRepositoryTest.executor": "Run",
     "JUnit.Jet2holidayApplicationTests.executor": "Run",
+    "JUnit.PortfolioControllerTest.executor": "Run",
+    "JUnit.PortfolioItemRepositoryTest.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "Merging liping",
+    "RunOnceActivity.git.unshallow": "true",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary": "JUnit5",
+    "com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5": "",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/lpmen/jet2holiday",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "project.propCompiler"
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RecentsManager">
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateTestDialog.RecentsKey">
+      <recent name="org.group.jet2holiday.controller" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.Jet2holidayApplication">
     <configuration name="Jet2holidayApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.group.jet2holiday.Jet2holidayApplication" />
       <module name="jet2holiday" />
@@ -68,9 +86,73 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="AccountControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="jet2holiday" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.group.jet2holiday.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.group.jet2holiday.controller" />
+      <option name="MAIN_CLASS_NAME" value="org.group.jet2holiday.controller.AccountControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="AccountRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="jet2holiday" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.group.jet2holiday.repository.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.group.jet2holiday.repository" />
+      <option name="MAIN_CLASS_NAME" value="org.group.jet2holiday.repository.AccountRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PortfolioControllerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="jet2holiday" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.group.jet2holiday.controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.group.jet2holiday.controller" />
+      <option name="MAIN_CLASS_NAME" value="org.group.jet2holiday.controller.PortfolioControllerTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PortfolioItemRepositoryTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="jet2holiday" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.group.jet2holiday.repository.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.group.jet2holiday.repository" />
+      <option name="MAIN_CLASS_NAME" value="org.group.jet2holiday.repository.PortfolioItemRepositoryTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Application.Jet2holidayApplication" />
+        <item itemvalue="JUnit.PortfolioItemRepositoryTest" />
+        <item itemvalue="JUnit.AccountRepositoryTest" />
+        <item itemvalue="JUnit.PortfolioControllerTest" />
+        <item itemvalue="JUnit.AccountControllerTest" />
       </list>
     </recent_temporary>
   </component>

@@ -31,9 +31,9 @@ const option = computed(() => ({
   yAxis: { type: 'value' },
   series: [
     {
-      name: 'Total Assets',
+      name: 'Total Profit/Loss',
       type: 'line',
-      data: props.points.map((point) => Number(point.totalAssets ?? 0)),
+      data: props.points.map((point) => Number(point.totalProfitLoss ?? 0)),
       smooth: true,
       showSymbol: false,
       areaStyle: {
@@ -45,7 +45,7 @@ const option = computed(() => ({
 </script>
 
 <template>
-  <BaseCard title="Historical Portfolio Performance">
+  <BaseCard title="Historical Portfolio Profit/Loss">
     <div class="range-buttons">
       <BaseButton
         v-for="item in ranges"

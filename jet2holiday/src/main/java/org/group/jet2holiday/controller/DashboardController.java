@@ -1,0 +1,26 @@
+package org.group.jet2holiday.controller;
+
+
+import org.group.jet2holiday.dto.dashboard.PerformanceResponse;
+import org.group.jet2holiday.service.DashboardService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/dashboard")
+public class DashboardController {
+
+    private final DashboardService dashboardService;
+
+    public DashboardController(DashboardService dashboardService) {
+        this.dashboardService = dashboardService;
+    }
+
+    @GetMapping("/performance")
+    public PerformanceResponse getPerformance(
+            @RequestParam(value = "range", defaultValue = "1W") String range) {
+        return dashboardService.getPerformance(range);
+    }
+}

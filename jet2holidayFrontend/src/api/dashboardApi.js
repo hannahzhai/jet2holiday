@@ -7,7 +7,7 @@ export const getDashboardSummary = async () => {
   return data
 }
 
-export const getPerformance = async (range = '1M') => {
+export const getPerformance = async (range = '1W') => {
   if (useMockApi) return mockGetPerformance(range)
   const { data } = await httpClient.get('/api/dashboard/performance', {
     params: { range }

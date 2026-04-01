@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.group.jet2holiday.client.YahooFinanceClient;
 import org.group.jet2holiday.dto.marketdata.LatestMarketDataResponse;
@@ -111,22 +112,24 @@ public class MarketDataService {
         );
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public LatestMarketDataResponse getLatestMarketData(String rawSymbol) {
         String symbol = normalizeSymbol(rawSymbol);
+
+        Map<String, BigDecimal> latestPrices = fetchLatestPricesSafely(Set.of(symbol));
+        BigDecimal livePrice = latestPrices.get(symbol);
+
+        if (livePrice != null) {
+            PriceSnapshot snapshot = upsertSnapshot(symbol, LocalDate.now(), livePrice, DEFAULT_CURRENCY);
+            return toResponse(snapshot);
+        }
+
         PriceSnapshot latestSnapshot = priceSnapshotRepository.findTopBySymbolOrderBySnapshotDateDesc(symbol)
                 .orElseThrow(() -> new ResourceNotFoundException("No market data found for symbol: " + symbol));
-
-        return new LatestMarketDataResponse(
-                latestSnapshot.getSymbol(),
-                latestSnapshot.getSnapshotDate(),
-                latestSnapshot.getCurrentPrice(),
-                latestSnapshot.getCurrency(),
-                SOURCE
-        );
+        return toResponse(latestSnapshot);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<LatestMarketDataResponse> getLatestMarketDataBatch(String symbolsCsv) {
         if (symbolsCsv == null || symbolsCsv.trim().isEmpty()) {
             throw new ResponseStatusException(BAD_REQUEST, "symbols query param must not be blank");
@@ -137,24 +140,44 @@ public class MarketDataService {
                 .distinct()
                 .toList();
 
+        Map<String, BigDecimal> latestPrices = fetchLatestPricesSafely(new LinkedHashSet<>(symbols));
         List<LatestMarketDataResponse> responses = new ArrayList<>();
         for (String symbol : symbols) {
-            PriceSnapshot latestSnapshot = priceSnapshotRepository.findTopBySymbolOrderBySnapshotDateDesc(symbol)
-                    .orElseThrow(() -> new ResourceNotFoundException("No market data found for symbol: " + symbol));
+            BigDecimal livePrice = latestPrices.get(symbol);
+            if (livePrice != null) {
+                PriceSnapshot snapshot = upsertSnapshot(symbol, LocalDate.now(), livePrice, DEFAULT_CURRENCY);
+                responses.add(toResponse(snapshot));
+                continue;
+            }
 
-            responses.add(new LatestMarketDataResponse(
-                    latestSnapshot.getSymbol(),
-                    latestSnapshot.getSnapshotDate(),
-                    latestSnapshot.getCurrentPrice(),
-                    latestSnapshot.getCurrency(),
-                    SOURCE
-            ));
+            Optional<PriceSnapshot> latestSnapshot = priceSnapshotRepository.findTopBySymbolOrderBySnapshotDateDesc(symbol);
+            latestSnapshot.map(this::toResponse).ifPresent(responses::add);
         }
 
         return responses;
     }
 
-    private void upsertSnapshot(String symbol, LocalDate snapshotDate, BigDecimal currentPrice, String currency) {
+    private Map<String, BigDecimal> fetchLatestPricesSafely(Set<String> symbols) {
+        try {
+            return yahooFinanceClient.fetchLatestPrices(symbols);
+        } catch (ExternalApiException ex) {
+            return Map.of();
+        } catch (RuntimeException ex) {
+            return Map.of();
+        }
+    }
+
+    private LatestMarketDataResponse toResponse(PriceSnapshot snapshot) {
+        return new LatestMarketDataResponse(
+                snapshot.getSymbol(),
+                snapshot.getSnapshotDate(),
+                snapshot.getCurrentPrice(),
+                snapshot.getCurrency(),
+                SOURCE
+        );
+    }
+
+    private PriceSnapshot upsertSnapshot(String symbol, LocalDate snapshotDate, BigDecimal currentPrice, String currency) {
         PriceSnapshot snapshot = priceSnapshotRepository.findBySymbolAndSnapshotDate(symbol, snapshotDate)
                 .orElseGet(PriceSnapshot::new);
 
@@ -162,7 +185,7 @@ public class MarketDataService {
         snapshot.setSnapshotDate(snapshotDate);
         snapshot.setCurrentPrice(currentPrice);
         snapshot.setCurrency(currency);
-        priceSnapshotRepository.save(snapshot);
+        return priceSnapshotRepository.save(snapshot);
     }
 
     private Account getCurrentAccount() {

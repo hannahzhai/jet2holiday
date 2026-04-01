@@ -20,7 +20,6 @@ VALUES
 (1, 'AAPL',    'Apple Inc.',                           'STOCK',  10.00000000,   180.0000, 'USD'),
 (1, 'TSLA',    'Tesla, Inc.',                          'STOCK',   8.00000000,   220.0000, 'USD'),
 (1, 'AGG',     'iShares Core U.S. Aggregate Bond ETF', 'BOND',   40.00000000,    98.5000, 'USD'),
-(1, 'BTC-USD', 'Bitcoin',                              'CRYPTO',  0.35000000, 42000.0000, 'USD'),
 (1, 'MSFT',    'Microsoft Corporation',                'STOCK',  12.00000000,   320.0000, 'USD')
 ON DUPLICATE KEY UPDATE
   company_name = VALUES(company_name),
@@ -45,10 +44,6 @@ VALUES
 ('AGG',     CURDATE() - INTERVAL 1 DAY, 100.0000, 'USD'),
 ('AGG',     CURDATE(),                  100.2000, 'USD'),
 
-('BTC-USD', CURDATE() - INTERVAL 2 DAY, 44880.0000, 'USD'),
-('BTC-USD', CURDATE() - INTERVAL 1 DAY, 45220.0000, 'USD'),
-('BTC-USD', CURDATE(),                  45550.0000, 'USD'),
-
 ('MSFT',    CURDATE() - INTERVAL 2 DAY, 334.2000, 'USD'),
 ('MSFT',    CURDATE() - INTERVAL 1 DAY, 336.7000, 'USD'),
 ('MSFT',    CURDATE(),                  338.0000, 'USD')
@@ -68,6 +63,6 @@ ORDER BY symbol;
 
 SELECT symbol, snapshot_date, current_price, currency
 FROM price_snapshot
-WHERE symbol IN ('AAPL', 'TSLA', 'AGG', 'BTC-USD', 'MSFT')
+WHERE symbol IN ('AAPL', 'TSLA', 'AGG', 'MSFT')
   AND snapshot_date BETWEEN CURDATE() - INTERVAL 2 DAY AND CURDATE()
 ORDER BY symbol, snapshot_date;

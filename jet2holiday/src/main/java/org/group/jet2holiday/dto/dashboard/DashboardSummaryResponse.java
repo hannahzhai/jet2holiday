@@ -15,6 +15,7 @@ public class DashboardSummaryResponse {
     private Map<String, BigDecimal> allocation;
     private Map<String, BigDecimal> categorySummary;
     private List<DashboardSummaryItemResponse> items;
+    private AttributionResponse attribution;
 
     public DashboardSummaryResponse() {
     }
@@ -32,6 +33,22 @@ public class DashboardSummaryResponse {
         this.allocation = allocation;
         this.categorySummary = categorySummary;
         this.items = items;
+    }
+
+    public DashboardSummaryResponse(BigDecimal cashBalance, BigDecimal totalAssets, BigDecimal totalMarketValue,
+                                    BigDecimal totalCost, BigDecimal totalProfitLoss, BigDecimal totalProfitLossPercent,
+                                    Map<String, BigDecimal> allocation, Map<String, BigDecimal> categorySummary,
+                                    List<DashboardSummaryItemResponse> items, AttributionResponse attribution) {
+        this.cashBalance = cashBalance;
+        this.totalAssets = totalAssets;
+        this.totalMarketValue = totalMarketValue;
+        this.totalCost = totalCost;
+        this.totalProfitLoss = totalProfitLoss;
+        this.totalProfitLossPercent = totalProfitLossPercent;
+        this.allocation = allocation;
+        this.categorySummary = categorySummary;
+        this.items = items;
+        this.attribution = attribution;
     }
 
     public BigDecimal getCashBalance() {
@@ -70,6 +87,10 @@ public class DashboardSummaryResponse {
         return items;
     }
 
+    public AttributionResponse getAttribution() {
+        return attribution;
+    }
+
     public void setCashBalance(BigDecimal cashBalance) {
         this.cashBalance = cashBalance;
     }
@@ -105,5 +126,8 @@ public class DashboardSummaryResponse {
     public void setItems(List<DashboardSummaryItemResponse> items) {
         this.items = items;
     }
-}
 
+    public void setAttribution(AttributionResponse attribution) {
+        this.attribution = attribution;
+    }
+}

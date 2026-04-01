@@ -4,10 +4,14 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.group.jet2holiday.dto.dashboard.AttributionAssetTypeItem;
+import org.group.jet2holiday.dto.dashboard.AttributionHoldingItem;
+import org.group.jet2holiday.dto.dashboard.AttributionResponse;
 import org.group.jet2holiday.dto.dashboard.PerformanceResponse;
 import org.group.jet2holiday.dto.dashboard.PerformanceResponse.PerformancePoint;
 import org.group.jet2holiday.dto.dashboard.DashboardSummaryItemResponse;
@@ -112,6 +116,8 @@ public class DashboardService {
         allocation.put("bonds", toAllocationPct(bondMarketValue, totalAssets));
         allocation.put("cash", toAllocationPct(categoryCash, totalAssets));
 
+        AttributionResponse attribution = buildAttribution(items, totalProfitLoss);
+
         return new DashboardSummaryResponse(
                 cashBalance.setScale(4, RoundingMode.HALF_UP),
                 totalAssets.setScale(4, RoundingMode.HALF_UP),
@@ -121,8 +127,76 @@ public class DashboardService {
                 totalProfitLossPercent.setScale(4, RoundingMode.HALF_UP),
                 allocation,
                 categorySummary,
-                items
+                items,
+                attribution
         );
+    }
+
+    private AttributionResponse buildAttribution(List<DashboardSummaryItemResponse> items, BigDecimal totalProfitLoss) {
+        List<DashboardSummaryItemResponse> positive = items.stream()
+                .filter(item -> safe(item.getProfitLoss()).compareTo(BigDecimal.ZERO) > 0)
+                .sorted(Comparator.comparing(DashboardSummaryItemResponse::getProfitLoss).reversed())
+                .limit(3)
+                .toList();
+
+        List<DashboardSummaryItemResponse> negative = items.stream()
+                .filter(item -> safe(item.getProfitLoss()).compareTo(BigDecimal.ZERO) < 0)
+                .sorted(Comparator.comparing(DashboardSummaryItemResponse::getProfitLoss))
+                .limit(3)
+                .toList();
+
+        List<AttributionHoldingItem> topContributors = positive.stream()
+                .map(item -> toAttributionHolding(item, totalProfitLoss))
+                .toList();
+
+        List<AttributionHoldingItem> topDetractors = negative.stream()
+                .map(item -> toAttributionHolding(item, totalProfitLoss))
+                .toList();
+
+        BigDecimal stockPnL = BigDecimal.ZERO;
+        BigDecimal bondPnL = BigDecimal.ZERO;
+        BigDecimal cashPnL = BigDecimal.ZERO;
+
+        for (DashboardSummaryItemResponse item : items) {
+            BigDecimal holdingPnL = safe(item.getProfitLoss());
+            String bucket = resolveAssetBucket(item.getAssetType());
+            if ("bonds".equals(bucket)) {
+                bondPnL = bondPnL.add(holdingPnL);
+            } else if ("cash".equals(bucket)) {
+                cashPnL = cashPnL.add(holdingPnL);
+            } else {
+                stockPnL = stockPnL.add(holdingPnL);
+            }
+        }
+
+        List<AttributionAssetTypeItem> byAssetType = List.of(
+                new AttributionAssetTypeItem("stocks", stockPnL.setScale(4, RoundingMode.HALF_UP), toContributionPct(stockPnL, totalProfitLoss)),
+                new AttributionAssetTypeItem("bonds", bondPnL.setScale(4, RoundingMode.HALF_UP), toContributionPct(bondPnL, totalProfitLoss)),
+                new AttributionAssetTypeItem("cash", cashPnL.setScale(4, RoundingMode.HALF_UP), toContributionPct(cashPnL, totalProfitLoss))
+        );
+
+        return new AttributionResponse(topContributors, topDetractors, byAssetType);
+    }
+
+    private AttributionHoldingItem toAttributionHolding(DashboardSummaryItemResponse item, BigDecimal totalProfitLoss) {
+        return new AttributionHoldingItem(
+                item.getSymbol(),
+                item.getCompanyName(),
+                item.getAssetType(),
+                safe(item.getMarketValue()).setScale(4, RoundingMode.HALF_UP),
+                safe(item.getProfitLoss()).setScale(4, RoundingMode.HALF_UP),
+                safe(item.getProfitLossPercent()).setScale(4, RoundingMode.HALF_UP),
+                toContributionPct(safe(item.getProfitLoss()), totalProfitLoss)
+        );
+    }
+
+    private BigDecimal toContributionPct(BigDecimal value, BigDecimal totalProfitLoss) {
+        if (safe(totalProfitLoss).compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO.setScale(4, RoundingMode.HALF_UP);
+        }
+        return safe(value).divide(totalProfitLoss, 6, RoundingMode.HALF_UP)
+                .multiply(ONE_HUNDRED)
+                .setScale(4, RoundingMode.HALF_UP);
     }
 
     private BigDecimal toAllocationPct(BigDecimal part, BigDecimal total) {

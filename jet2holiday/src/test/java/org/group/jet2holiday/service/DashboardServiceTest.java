@@ -82,6 +82,11 @@ class DashboardServiceTest {
         assertEquals(new BigDecimal("1200.0000"), response.getCategorySummary().get("stocks"));
         assertEquals(new BigDecimal("1000.0000"), response.getCategorySummary().get("bonds"));
         assertEquals(new BigDecimal("1000.0000"), response.getCategorySummary().get("cash"));
+        assertEquals(1, response.getAttribution().getTopContributors().size());
+        assertEquals("AAPL", response.getAttribution().getTopContributors().get(0).getSymbol());
+        assertEquals(new BigDecimal("100.0000"), response.getAttribution().getTopContributors().get(0).getContributionPercent());
+        assertEquals(0, response.getAttribution().getTopDetractors().size());
+        assertEquals(3, response.getAttribution().getByAssetType().size());
     }
 
     @Test
@@ -108,6 +113,7 @@ class DashboardServiceTest {
         assertEquals(new BigDecimal("100.0000"), response.getCategorySummary().get("stocks"));
         assertEquals(new BigDecimal("0.0000"), response.getCategorySummary().get("bonds"));
         assertEquals(new BigDecimal("0.0000"), response.getCategorySummary().get("cash"));
+        assertEquals("stocks", response.getAttribution().getByAssetType().get(0).getAssetType());
     }
 
     @Test
@@ -124,6 +130,8 @@ class DashboardServiceTest {
         assertEquals(new BigDecimal("0.0000"), response.getAllocation().get("stocks"));
         assertEquals(new BigDecimal("0.0000"), response.getAllocation().get("bonds"));
         assertEquals(new BigDecimal("0.0000"), response.getAllocation().get("cash"));
+        assertEquals(0, response.getAttribution().getTopContributors().size());
+        assertEquals(0, response.getAttribution().getTopDetractors().size());
+        assertEquals(new BigDecimal("0.0000"), response.getAttribution().getByAssetType().get(0).getContributionPercent());
     }
 }
-

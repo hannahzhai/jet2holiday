@@ -10,8 +10,7 @@ defineProps({
 const categories = [
   { key: 'cash', label: 'Cash' },
   { key: 'stocks', label: 'Stocks' },
-  { key: 'bonds', label: 'Bonds' },
-  { key: 'crypto', label: 'Crypto' }
+  { key: 'bonds', label: 'Bonds' }
 ]
 </script>
 

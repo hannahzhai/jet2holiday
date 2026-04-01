@@ -1,40 +1,41 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { usePortfolioStore } from '../store/portfolioStore'
-import BaseButton from '../components/common/BaseButton.vue'
-import LoadingSpinner from '../components/common/LoadingSpinner.vue'
-import SummaryCards from '../components/dashboard/SummaryCards.vue'
-import AllocationPieChart from '../components/dashboard/AllocationPieChart.vue'
-import PerformanceLineChart from '../components/dashboard/PerformanceLineChart.vue'
-import CategorySummaryCards from '../components/dashboard/CategorySummaryCards.vue'
-import HoldingsOverviewTable from '../components/dashboard/HoldingsOverviewTable.vue'
-import CashBalanceModal from '../components/account/CashBalanceModal.vue'
+import { computed, onMounted, ref } from 'vue';
+import { usePortfolioStore } from '../store/portfolioStore';
+import BaseButton from '../components/common/BaseButton.vue';
+import LoadingSpinner from '../components/common/LoadingSpinner.vue';
+import SummaryCards from '../components/dashboard/SummaryCards.vue';
+import AllocationPieChart from '../components/dashboard/AllocationPieChart.vue';
+import PerformanceLineChart from '../components/dashboard/PerformanceLineChart.vue';
+import CategorySummaryCards from '../components/dashboard/CategorySummaryCards.vue';
+import PerformanceAttributionCard from '../components/dashboard/PerformanceAttributionCard.vue';
+import HoldingsOverviewTable from '../components/dashboard/HoldingsOverviewTable.vue';
+import CashBalanceModal from '../components/account/CashBalanceModal.vue';
 
-const store = usePortfolioStore()
-const selectedRange = ref('1M')
-const cashModalOpen = ref(false)
+const store = usePortfolioStore();
+const selectedRange = ref('1M');
+const cashModalOpen = ref(false);
 
-const summary = computed(() => store.summary)
-const account = computed(() => store.account)
-const performance = computed(() => store.performance)
-const loading = computed(() => store.loading)
-const holdings = computed(() => store.holdings || [])
-const latestSnapshots = computed(() => store.latestSnapshots || [])
-const refreshResult = computed(() => store.marketRefreshResult)
-const currency = computed(() => account.value?.currency || summary.value?.currency || 'USD')
+const summary = computed(() => store.summary);
+const account = computed(() => store.account);
+const performance = computed(() => store.performance);
+const loading = computed(() => store.loading);
+const holdings = computed(() => store.holdings || []);
+const latestSnapshots = computed(() => store.latestSnapshots || []);
+const refreshResult = computed(() => store.marketRefreshResult);
+const currency = computed(() => account.value?.currency || summary.value?.currency || 'USD');
 
 const dashboardItems = computed(() => {
   if (Array.isArray(summary.value?.items) && summary.value.items.length) {
-    return summary.value.items
+    return summary.value.items;
   }
 
-  const latestBySymbol = new Map(latestSnapshots.value.map((item) => [item.symbol, item]))
-  return holdings.value.map((item) => {
-    const latest = latestBySymbol.get(`${item.symbol || ''}`.toUpperCase()) || {}
-    const currentPrice = latest.currentPrice
-    const marketValue = currentPrice != null ? Number(item.shares || 0) * Number(currentPrice || 0) : null
-    const totalCost = Number(item.shares || 0) * Number(item.costBasis || 0)
-    const profitLoss = marketValue != null ? marketValue - totalCost : null
+  const latestBySymbol = new Map(latestSnapshots.value.map(item => [item.symbol, item]));
+  return holdings.value.map(item => {
+    const latest = latestBySymbol.get(`${item.symbol || ''}`.toUpperCase()) || {};
+    const currentPrice = latest.currentPrice;
+    const marketValue = currentPrice != null ? Number(item.shares || 0) * Number(currentPrice || 0) : null;
+    const totalCost = Number(item.shares || 0) * Number(item.costBasis || 0);
+    const profitLoss = marketValue != null ? marketValue - totalCost : null;
 
     return {
       ...item,
@@ -42,43 +43,36 @@ const dashboardItems = computed(() => {
       marketValue,
       profitLoss,
       profitLossPercent: profitLoss != null && totalCost > 0 ? (profitLoss / totalCost) * 100 : null,
-      snapshotDate: latest.snapshotDate
-    }
-  })
-})
+      snapshotDate: latest.snapshotDate,
+    };
+  });
+});
 
 const loadData = async () => {
-  await Promise.allSettled([
-    store.loadAccount(),
-    store.loadHoldings(),
-    store.loadDashboard(selectedRange.value)
-  ])
-}
+  await Promise.allSettled([store.loadAccount(), store.loadHoldings(), store.loadDashboard(selectedRange.value)]);
+};
 
 const refreshMarket = async () => {
   try {
-    await store.refreshMarketDataAndReload(selectedRange.value)
-  } catch {
-  }
-}
+    await store.refreshMarketDataAndReload(selectedRange.value);
+  } catch {}
+};
 
-const onRangeChange = async (range) => {
-  selectedRange.value = range
+const onRangeChange = async range => {
+  selectedRange.value = range;
   try {
-    await store.loadPerformance(range)
-  } catch {
-  }
-}
+    await store.loadPerformance(range);
+  } catch {}
+};
 
-const saveCashBalance = async (value) => {
+const saveCashBalance = async value => {
   try {
-    await store.saveCashBalance(value)
-    cashModalOpen.value = false
-  } catch {
-  }
-}
+    await store.saveCashBalance(value);
+    cashModalOpen.value = false;
+  } catch {}
+};
 
-onMounted(loadData)
+onMounted(loadData);
 </script>
 
 <template>
@@ -86,9 +80,7 @@ onMounted(loadData)
     <div class="page-header">
       <h1>Dashboard</h1>
       <div class="actions">
-        <BaseButton variant="secondary" :loading="loading.refreshMarket" @click="refreshMarket">
-          Refresh Market Data
-        </BaseButton>
+        <BaseButton variant="secondary" :loading="loading.refreshMarket" @click="refreshMarket">Refresh Market Data</BaseButton>
         <BaseButton @click="cashModalOpen = true">Edit Cash Balance</BaseButton>
       </div>
     </div>
@@ -96,13 +88,9 @@ onMounted(loadData)
     <div v-if="refreshResult" class="refresh-status" :class="refreshResult.success ? 'ok' : 'warn'">
       <div>
         <strong>{{ refreshResult.message }}</strong>
-        <span>
-          Date: {{ refreshResult.snapshotDate }} ¡¤ Success: {{ refreshResult.refreshedCount || 0 }}
-        </span>
+        <span>Date: {{ refreshResult.snapshotDate }} Success: {{ refreshResult.refreshedCount || 0 }}</span>
       </div>
-      <small v-if="refreshResult.failedSymbols?.length">
-        Failed: {{ refreshResult.failedSymbols.join(', ') }}
-      </small>
+      <small v-if="refreshResult.failedSymbols?.length">Failed: {{ refreshResult.failedSymbols.join(', ') }}</small>
     </div>
 
     <LoadingSpinner v-if="loading.dashboard && !summary && !holdings.length" />
@@ -113,21 +101,12 @@ onMounted(loadData)
         <AllocationPieChart :allocation="summary?.allocation" :category-summary="summary?.categorySummary" />
         <CategorySummaryCards :category-summary="summary?.categorySummary" :currency="currency" />
       </div>
+      <PerformanceAttributionCard :attribution="summary?.attribution" :currency="currency" />
       <HoldingsOverviewTable :items="dashboardItems" :currency="currency" />
-      <PerformanceLineChart
-        :points="performance?.points || []"
-        :range="selectedRange"
-        :loading="loading.performance"
-        @change-range="onRangeChange"
-      />
+      <PerformanceLineChart :points="performance?.points || []" :range="selectedRange" :loading="loading.performance" @change-range="onRangeChange" />
     </template>
 
-    <CashBalanceModal
-      v-model="cashModalOpen"
-      :current-balance="account?.cashBalance || 0"
-      :loading="loading.updateCash"
-      @submit="saveCashBalance"
-    />
+    <CashBalanceModal v-model="cashModalOpen" :current-balance="account?.cashBalance || 0" :loading="loading.updateCash" @submit="saveCashBalance" />
   </section>
 </template>
 

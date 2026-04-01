@@ -3,6 +3,7 @@ package org.group.jet2holiday.controller;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import org.group.jet2holiday.dto.dashboard.AttributionResponse;
 import org.group.jet2holiday.dto.dashboard.DashboardSummaryItemResponse;
 import org.group.jet2holiday.dto.dashboard.DashboardSummaryResponse;
 import org.group.jet2holiday.service.DashboardService;
@@ -40,14 +41,15 @@ class DashboardControllerTest {
                 new BigDecimal("11.11"),
                 Map.of("stocks", new BigDecimal("50"), "bonds", new BigDecimal("20"), "cash", new BigDecimal("30")),
                 Map.of("stocks", new BigDecimal("1500"), "bonds", new BigDecimal("600"), "cash", new BigDecimal("900")),
-                List.of(new DashboardSummaryItemResponse())
+                List.of(new DashboardSummaryItemResponse()),
+                new AttributionResponse(List.of(), List.of(), List.of())
         );
         when(dashboardService.getSummary()).thenReturn(summary);
 
         DashboardSummaryResponse result = dashboardController.getSummary();
 
         assertEquals(new BigDecimal("3000"), result.getTotalAssets());
+        assertEquals(0, result.getAttribution().getTopContributors().size());
         verify(dashboardService).getSummary();
     }
 }
-

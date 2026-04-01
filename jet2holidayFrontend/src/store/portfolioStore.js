@@ -4,6 +4,7 @@ import { getAccount, updateCashBalance } from '../api/accountApi'
 import { getPortfolioItems, createPortfolioItem, updatePortfolioItem, deletePortfolioItem } from '../api/portfolioApi'
 import { getDashboardSummary, getPerformance } from '../api/dashboardApi'
 import { refreshMarketData, getLatestMarketData } from '../api/marketDataApi'
+import { generatePortfolioInsight } from '../api/aiApi'
 import { normalizeApiError } from '../api/httpClient'
 
 const isNotFoundError = (error) => Number(error?.response?.status) === 404
@@ -15,6 +16,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   const performance = ref({ range: '1M', points: [] })
   const latestSnapshots = ref([])
   const marketRefreshResult = ref(null)
+  const aiInsight = ref(null)
 
   const loading = ref({
     dashboard: false,
@@ -23,7 +25,8 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     mutateHolding: false,
     updateCash: false,
     refreshMarket: false,
-    latestMarket: false
+    latestMarket: false,
+    aiInsight: false
   })
 
   const notification = ref({ type: 'success', message: '' })
@@ -212,6 +215,24 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     }
   }
 
+  const loadPortfolioInsight = async (range = '1M') => {
+    loading.value.aiInsight = true
+    try {
+      aiInsight.value = await generatePortfolioInsight(range)
+      if (aiInsight.value?.fallbackUsed) {
+        setNotification('error', 'AI service unavailable. Showing fallback insight.')
+      } else {
+        setNotification('success', 'Portfolio AI insight generated.')
+      }
+      return aiInsight.value
+    } catch (error) {
+      setNotification('error', normalizeApiError(error, 'Failed to generate portfolio insight.'))
+      throw error
+    } finally {
+      loading.value.aiInsight = false
+    }
+  }
+
   return {
     account,
     summary,
@@ -219,6 +240,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     performance,
     latestSnapshots,
     marketRefreshResult,
+    aiInsight,
     loading,
     notification,
     clearNotification,
@@ -232,6 +254,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     editHolding,
     removeHolding,
     saveCashBalance,
-    refreshMarketDataAndReload
+    refreshMarketDataAndReload,
+    loadPortfolioInsight
   }
 })

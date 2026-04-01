@@ -10,6 +10,7 @@ import CategorySummaryCards from '../components/dashboard/CategorySummaryCards.v
 import PerformanceAttributionCard from '../components/dashboard/PerformanceAttributionCard.vue';
 import HoldingsOverviewTable from '../components/dashboard/HoldingsOverviewTable.vue';
 import CashBalanceModal from '../components/account/CashBalanceModal.vue';
+import PortfolioInsightCard from '../components/dashboard/PortfolioInsightCard.vue';
 
 const store = usePortfolioStore();
 const selectedRange = ref('1M');
@@ -22,6 +23,7 @@ const loading = computed(() => store.loading);
 const holdings = computed(() => store.holdings || []);
 const latestSnapshots = computed(() => store.latestSnapshots || []);
 const refreshResult = computed(() => store.marketRefreshResult);
+const aiInsight = computed(() => store.aiInsight);
 const currency = computed(() => account.value?.currency || summary.value?.currency || 'USD');
 
 const dashboardItems = computed(() => {
@@ -58,6 +60,12 @@ const refreshMarket = async () => {
   } catch {}
 };
 
+const generateAiInsight = async () => {
+  try {
+    await store.loadPortfolioInsight(selectedRange.value || '1M');
+  } catch {}
+};
+
 const onRangeChange = async range => {
   selectedRange.value = range;
   try {
@@ -81,6 +89,7 @@ onMounted(loadData);
       <h1>Dashboard</h1>
       <div class="actions">
         <BaseButton variant="secondary" :loading="loading.refreshMarket" @click="refreshMarket">Refresh Market Data</BaseButton>
+        <BaseButton variant="secondary" :loading="loading.aiInsight" @click="generateAiInsight">Generate AI Insight</BaseButton>
         <BaseButton @click="cashModalOpen = true">Edit Cash Balance</BaseButton>
       </div>
     </div>
@@ -102,6 +111,7 @@ onMounted(loadData);
         <CategorySummaryCards :category-summary="summary?.categorySummary" :currency="currency" />
       </div>
       <PerformanceAttributionCard :attribution="summary?.attribution" :currency="currency" />
+      <PortfolioInsightCard :insight="aiInsight" />
       <HoldingsOverviewTable :items="dashboardItems" :currency="currency" />
       <PerformanceLineChart :points="performance?.points || []" :range="selectedRange" :loading="loading.performance" @change-range="onRangeChange" />
     </template>

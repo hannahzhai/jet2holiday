@@ -5,7 +5,7 @@ const resolvedBaseURL = configuredBaseURL ?? (import.meta.env.DEV ? '' : 'http:/
 
 const httpClient = axios.create({
   baseURL: resolvedBaseURL,
-  timeout: 15000
+  timeout: 35000
 })
 
 const useMockValue = `${import.meta.env.VITE_USE_MOCK_API ?? 'false'}`.toLowerCase()

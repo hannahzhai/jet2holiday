@@ -313,3 +313,50 @@ export const mockGetLatestMarketData = async (symbols = []) => {
       source: 'MOCK'
     }))
 }
+
+const normalizeRange = (range = '1M') => (dayCounts[range] ? range : '1M')
+
+const formatNum = (value) => Number(value ?? 0).toFixed(2)
+
+const topByProfit = (items = [], direction = 'positive') => {
+  const sign = direction === 'positive' ? 1 : -1
+  const filtered = items.filter((item) => {
+    const pnl = Number(item.profitLoss || 0)
+    return direction === 'positive' ? pnl > 0 : pnl < 0
+  })
+  return filtered
+    .sort((a, b) => (Number(b.profitLoss) - Number(a.profitLoss)) * sign)
+    .slice(0, 2)
+    .map((item) => `${item.symbol} (${formatNum(item.profitLoss)})`)
+}
+
+export const mockGeneratePortfolioInsight = async (range = '1M') => {
+  await delay()
+  const normalizedRange = normalizeRange(range)
+  const summary = computeSummary()
+  const points = buildPerformancePoints(normalizedRange)
+  const first = Number(points?.[0]?.totalAssets ?? summary.totalAssets)
+  const last = Number(points?.[points.length - 1]?.totalAssets ?? summary.totalAssets)
+  const move = last - first
+  const movePct = first > 0 ? (move / first) * 100 : 0
+  const direction = move >= 0 ? 'up' : 'down'
+  const contributors = topByProfit(summary.items, 'positive')
+  const detractors = topByProfit(summary.items, 'negative')
+
+  const insight = [
+    `- Equity allocation is ${formatNum(summary.allocation?.stocks)}%, which suggests concentration risk in risk assets.`,
+    `- Main return contributors are ${contributors.length ? contributors.join(', ') : 'not obvious from current holdings'}.`,
+    `- Current detractors are ${detractors.length ? detractors.join(', ') : 'limited in this period'}.`,
+    `- Crypto exposure is ${formatNum(summary.allocation?.crypto || 0)}%, so impact on total volatility is currently contained.`,
+    `- Cash allocation is ${formatNum(summary.allocation?.cash)}%, providing a liquidity buffer for rebalancing.`,
+    `- Over ${normalizedRange}, portfolio value is ${direction} ${formatNum(Math.abs(movePct))}% (${formatNum(first)} -> ${formatNum(last)}).`,
+    '- Suggested action: reduce single-name concentration and phase into more diversified allocations.'
+  ].join('\n')
+
+  return {
+    insight,
+    fallbackUsed: false,
+    model: 'mock-insight-engine',
+    generatedAt: new Date().toISOString()
+  }
+}

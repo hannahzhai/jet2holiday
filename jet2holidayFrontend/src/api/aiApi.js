@@ -1,5 +1,5 @@
 import httpClient, { useMockApi } from './httpClient'
-import { mockGeneratePortfolioInsight } from './mock/mockDataSource'
+import { mockGeneratePortfolioInsight, mockAskMiniMaxChat } from './mock/mockDataSource'
 
 export const generatePortfolioInsight = async (range = '1M') => {
   if (useMockApi) return mockGeneratePortfolioInsight(range)
@@ -12,4 +12,10 @@ export const generatePortfolioInsight = async (range = '1M') => {
     }
     throw error
   }
+}
+
+export const askMiniMaxChat = async (question, range = '1M') => {
+  if (useMockApi) return mockAskMiniMaxChat(question, range)
+  const { data } = await httpClient.post('/api/ai/minimax-chat', { question, range })
+  return data
 }

@@ -11,6 +11,7 @@ import PerformanceAttributionCard from '../components/dashboard/PerformanceAttri
 import HoldingsOverviewTable from '../components/dashboard/HoldingsOverviewTable.vue';
 import CashBalanceModal from '../components/account/CashBalanceModal.vue';
 import PortfolioInsightCard from '../components/dashboard/PortfolioInsightCard.vue';
+import MiniMaxChatCard from '../components/dashboard/MiniMaxChatCard.vue';
 
 const store = usePortfolioStore();
 const selectedRange = ref('1M');
@@ -24,6 +25,7 @@ const holdings = computed(() => store.holdings || []);
 const latestSnapshots = computed(() => store.latestSnapshots || []);
 const refreshResult = computed(() => store.marketRefreshResult);
 const aiInsight = computed(() => store.aiInsight);
+const minimaxChatAnswer = computed(() => store.minimaxChatAnswer);
 const currency = computed(() => account.value?.currency || summary.value?.currency || 'USD');
 
 const dashboardItems = computed(() => {
@@ -63,6 +65,12 @@ const refreshMarket = async () => {
 const generateAiInsight = async () => {
   try {
     await store.loadPortfolioInsight(selectedRange.value || '1M');
+  } catch {}
+};
+
+const askMiniMaxChat = async ({ question, range }) => {
+  try {
+    await store.askMiniMaxChat(question, range || selectedRange.value || '1M');
   } catch {}
 };
 
@@ -112,6 +120,12 @@ onMounted(loadData);
       </div>
       <PerformanceAttributionCard :attribution="summary?.attribution" :currency="currency" />
       <PortfolioInsightCard :insight="aiInsight" />
+      <MiniMaxChatCard
+        :loading="loading.minimaxChat"
+        :answer="minimaxChatAnswer"
+        :range="selectedRange"
+        @ask="askMiniMaxChat"
+      />
       <HoldingsOverviewTable :items="dashboardItems" :currency="currency" />
       <PerformanceLineChart :points="performance?.points || []" :range="selectedRange" :loading="loading.performance" @change-range="onRangeChange" />
     </template>

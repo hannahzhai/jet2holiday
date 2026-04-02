@@ -4,7 +4,7 @@ import { getAccount, updateCashBalance } from '../api/accountApi'
 import { getPortfolioItems, createPortfolioItem, updatePortfolioItem, deletePortfolioItem } from '../api/portfolioApi'
 import { getDashboardSummary, getPerformance } from '../api/dashboardApi'
 import { refreshMarketData, getLatestMarketData } from '../api/marketDataApi'
-import { generatePortfolioInsight } from '../api/aiApi'
+import { generatePortfolioInsight, askMiniMaxChat as askMiniMaxChatApi } from '../api/aiApi'
 import { normalizeApiError } from '../api/httpClient'
 
 const isNotFoundError = (error) => Number(error?.response?.status) === 404
@@ -17,6 +17,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
   const latestSnapshots = ref([])
   const marketRefreshResult = ref(null)
   const aiInsight = ref(null)
+  const minimaxChatAnswer = ref(null)
 
   const loading = ref({
     dashboard: false,
@@ -26,7 +27,8 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     updateCash: false,
     refreshMarket: false,
     latestMarket: false,
-    aiInsight: false
+    aiInsight: false,
+    minimaxChat: false
   })
 
   const notification = ref({ type: 'success', message: '' })
@@ -233,6 +235,22 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     }
   }
 
+  const askMiniMaxChat = async (question, range = '1M') => {
+    loading.value.minimaxChat = true
+    try {
+      minimaxChatAnswer.value = await askMiniMaxChatApi(question, range)
+      if (minimaxChatAnswer.value?.fallbackUsed) {
+        setNotification('error', 'MiniMax unavailable. Showing fallback answer.')
+      }
+      return minimaxChatAnswer.value
+    } catch (error) {
+      setNotification('error', normalizeApiError(error, 'Failed to get MiniMax chat response.'))
+      throw error
+    } finally {
+      loading.value.minimaxChat = false
+    }
+  }
+
   return {
     account,
     summary,
@@ -241,6 +259,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     latestSnapshots,
     marketRefreshResult,
     aiInsight,
+    minimaxChatAnswer,
     loading,
     notification,
     clearNotification,
@@ -255,6 +274,7 @@ export const usePortfolioStore = defineStore('portfolio', () => {
     removeHolding,
     saveCashBalance,
     refreshMarketDataAndReload,
-    loadPortfolioInsight
+    loadPortfolioInsight,
+    askMiniMaxChat
   }
 })

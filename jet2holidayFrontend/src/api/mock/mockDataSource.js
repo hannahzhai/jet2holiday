@@ -360,3 +360,29 @@ export const mockGeneratePortfolioInsight = async (range = '1M') => {
     generatedAt: new Date().toISOString()
   }
 }
+
+export const mockAskMiniMaxChat = async (question, range = '1M') => {
+  await delay()
+  const normalizedRange = normalizeRange(range)
+  const summary = computeSummary()
+  const points = buildPerformancePoints(normalizedRange)
+  const first = Number(points?.[0]?.totalAssets ?? summary.totalAssets)
+  const last = Number(points?.[points.length - 1]?.totalAssets ?? summary.totalAssets)
+  const direction = last >= first ? 'up' : 'down'
+  const changePct = first > 0 ? ((last - first) / first) * 100 : 0
+
+  const answer = [
+    `Question received: "${`${question || ''}`.trim() || 'N/A'}".`,
+    `Current allocation is stocks ${formatNum(summary.allocation?.stocks)}%, bonds ${formatNum(summary.allocation?.bonds)}%, cash ${formatNum(summary.allocation?.cash)}%.`,
+    `Cash buffer is ${formatNum(summary.cashBalance)} and total P/L is ${formatNum(summary.totalProfitLoss)} (${formatNum(summary.totalProfitLossPercent)}%).`,
+    `Over ${normalizedRange}, portfolio is ${direction} ${formatNum(Math.abs(changePct))}% (${formatNum(first)} -> ${formatNum(last)}).`,
+    'MVP suggestion: keep concentration risk in check and rebalance in small steps.'
+  ].join('\n')
+
+  return {
+    answer,
+    fallbackUsed: false,
+    model: 'mock-minimax-chat',
+    generatedAt: new Date().toISOString()
+  }
+}

@@ -1,19 +1,19 @@
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const props = defineProps({
   variant: { type: String, default: 'primary' },
   type: { type: String, default: 'button' },
   loading: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false }
-})
+  disabled: { type: Boolean, default: false },
+});
 
-const classes = computed(() => ['base-btn', `base-btn-${props.variant}`])
+const classes = computed(() => ['base-btn', `base-btn-${props.variant}`]);
 </script>
 
 <template>
   <button :type="type" :class="classes" :disabled="disabled || loading">
-    <span v-if="loading" class="dot-loader">???</span>
+    <span v-if="loading" class="dot-loader">Loading</span>
     <slot v-else />
   </button>
 </template>

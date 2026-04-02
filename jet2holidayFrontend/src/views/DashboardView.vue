@@ -97,7 +97,6 @@ onMounted(loadData);
       <h1>Dashboard</h1>
       <div class="actions">
         <BaseButton variant="secondary" :loading="loading.refreshMarket" @click="refreshMarket">Refresh Market Data</BaseButton>
-        <BaseButton variant="secondary" :loading="loading.aiInsight" @click="generateAiInsight">Generate AI Insight</BaseButton>
         <BaseButton @click="cashModalOpen = true">Edit Cash Balance</BaseButton>
       </div>
     </div>
@@ -119,7 +118,7 @@ onMounted(loadData);
         <CategorySummaryCards :category-summary="summary?.categorySummary" :currency="currency" />
       </div>
       <PerformanceAttributionCard :attribution="summary?.attribution" :currency="currency" />
-      <PortfolioInsightCard :insight="aiInsight" />
+      <PortfolioInsightCard :insight="aiInsight" :loading="loading.aiInsight" @generate="generateAiInsight" />
       <MiniMaxChatCard
         :loading="loading.minimaxChat"
         :answer="minimaxChatAnswer"

@@ -1,10 +1,13 @@
 <script setup>
 import BaseCard from '../common/BaseCard.vue'
+import BaseButton from '../common/BaseButton.vue'
 import EmptyState from '../common/EmptyState.vue'
 
 const props = defineProps({
-  insight: { type: Object, default: null }
+  insight: { type: Object, default: null },
+  loading: { type: Boolean, default: false }
 })
+const emit = defineEmits(['generate'])
 
 const formatDateTime = (value) => {
   if (!value) return '-'
@@ -22,6 +25,9 @@ const formatDateTime = (value) => {
 
 <template>
   <BaseCard title="AI Portfolio Insight">
+    <div class="insight-actions">
+      <BaseButton variant="secondary" :loading="props.loading" @click="emit('generate')">Generate AI Insight</BaseButton>
+    </div>
     <EmptyState
       v-if="!props.insight?.insight"
       title="No AI insight yet"
@@ -39,6 +45,12 @@ const formatDateTime = (value) => {
 </template>
 
 <style scoped>
+.insight-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
 .insight-body {
   display: grid;
   gap: 0.65rem;

@@ -2,6 +2,7 @@ package org.group.jet2holiday.controller;
 
 import java.util.List;
 import org.group.jet2holiday.dto.marketdata.LatestMarketDataResponse;
+import org.group.jet2holiday.dto.marketdata.MarketInstrumentPageResponse;
 import org.group.jet2holiday.dto.marketdata.MarketDataRefreshResponse;
 import org.group.jet2holiday.service.MarketDataService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,14 @@ public class MarketDataController {
     @GetMapping("/latest")
     public List<LatestMarketDataResponse> getLatestBySymbols(@RequestParam("symbols") String symbols) {
         return marketDataService.getLatestMarketDataBatch(symbols);
+    }
+
+    @GetMapping("/instruments")
+    public MarketInstrumentPageResponse getMarketInstruments(
+            @RequestParam("assetType") String assetType,
+            @RequestParam(value = "page", required = false) Integer page
+    ) {
+        return marketDataService.getMarketInstruments(assetType, page);
     }
 
 }

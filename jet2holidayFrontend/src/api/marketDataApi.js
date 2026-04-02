@@ -1,5 +1,5 @@
 import httpClient, { useMockApi } from './httpClient'
-import { mockRefreshMarketData, mockGetLatestMarketData } from './mock/mockDataSource'
+import { mockRefreshMarketData, mockGetLatestMarketData, mockGetMarketInstruments } from './mock/mockDataSource'
 
 export const refreshMarketData = async () => {
   if (useMockApi) return mockRefreshMarketData()
@@ -25,4 +25,20 @@ export const getLatestMarketData = async (symbols = []) => {
   })
 
   return Array.isArray(data) ? data : []
+}
+
+export const getMarketInstruments = async (assetType = 'STOCK', page = 1) => {
+  const normalizedAssetType = `${assetType || ''}`.trim().toUpperCase() || 'STOCK'
+  const normalizedPage = Number(page) > 0 ? Number(page) : 1
+
+  if (useMockApi) return mockGetMarketInstruments(normalizedAssetType, normalizedPage)
+
+  const { data } = await httpClient.get('/api/market-data/instruments', {
+    params: {
+      assetType: normalizedAssetType,
+      page: normalizedPage
+    }
+  })
+
+  return data || { page: normalizedPage, size: 15, total: 0, totalPages: 0, items: [] }
 }

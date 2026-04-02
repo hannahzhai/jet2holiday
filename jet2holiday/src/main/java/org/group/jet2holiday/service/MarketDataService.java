@@ -6,17 +6,26 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import org.group.jet2holiday.client.FinnhubQuoteClient;
 import org.group.jet2holiday.dto.marketdata.LatestMarketDataResponse;
+import org.group.jet2holiday.dto.marketdata.MarketInstrumentItemResponse;
+import org.group.jet2holiday.dto.marketdata.MarketInstrumentPageResponse;
 import org.group.jet2holiday.dto.marketdata.MarketDataRefreshResponse;
 import org.group.jet2holiday.entity.Account;
+import org.group.jet2holiday.entity.MarketInstrument;
 import org.group.jet2holiday.entity.PortfolioItem;
 import org.group.jet2holiday.entity.PriceSnapshot;
 import org.group.jet2holiday.exception.ExternalApiException;
 import org.group.jet2holiday.repository.AccountRepository;
+import org.group.jet2holiday.repository.MarketInstrumentRepository;
 import org.group.jet2holiday.repository.PortfolioItemRepository;
 import org.group.jet2holiday.repository.PriceSnapshotRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -29,20 +38,25 @@ public class MarketDataService {
 
     private static final String SOURCE = "FINNHUB_QUOTE";
     private static final String DEFAULT_CURRENCY = "USD";
+    private static final int MARKET_PAGE_SIZE = 15;
+    private static final Set<String> SUPPORTED_ASSET_TYPES = Set.of("STOCK", "BOND");
 
     private final AccountRepository accountRepository;
     private final PortfolioItemRepository portfolioItemRepository;
+    private final MarketInstrumentRepository marketInstrumentRepository;
     private final PriceSnapshotRepository priceSnapshotRepository;
     private final FinnhubQuoteClient finnhubQuoteClient;
 
     public MarketDataService(
             AccountRepository accountRepository,
             PortfolioItemRepository portfolioItemRepository,
+            MarketInstrumentRepository marketInstrumentRepository,
             PriceSnapshotRepository priceSnapshotRepository,
             FinnhubQuoteClient finnhubQuoteClient
     ) {
         this.accountRepository = accountRepository;
         this.portfolioItemRepository = portfolioItemRepository;
+        this.marketInstrumentRepository = marketInstrumentRepository;
         this.priceSnapshotRepository = priceSnapshotRepository;
         this.finnhubQuoteClient = finnhubQuoteClient;
     }
@@ -136,6 +150,36 @@ public class MarketDataService {
         return responses;
     }
 
+    @Transactional
+    public MarketInstrumentPageResponse getMarketInstruments(String rawAssetType, Integer rawPage) {
+        String assetType = normalizeAssetType(rawAssetType);
+        int page = normalizePage(rawPage);
+        Pageable pageable = PageRequest.of(
+                page - 1,
+                MARKET_PAGE_SIZE,
+                Sort.by(Sort.Order.asc("sortOrder"), Sort.Order.asc("id"))
+        );
+        Page<MarketInstrument> result = marketInstrumentRepository.findByAssetTypeAndEnabledTrue(assetType, pageable);
+
+        List<MarketInstrumentItemResponse> items = result.getContent().stream()
+                .map(item -> new MarketInstrumentItemResponse(
+                        item.getSymbol(),
+                        item.getCompanyName(),
+                        item.getAssetType(),
+                        item.getMarket(),
+                        item.getCurrency()
+                ))
+                .toList();
+
+        return new MarketInstrumentPageResponse(
+                page,
+                MARKET_PAGE_SIZE,
+                (int) result.getTotalElements(),
+                result.getTotalPages(),
+                items
+        );
+    }
+
     private BigDecimal fetchRequiredRealtimePrice(String symbol) {
         try {
             return finnhubQuoteClient.fetchQuote(symbol)
@@ -178,5 +222,27 @@ public class MarketDataService {
         }
         return symbol.trim().toUpperCase();
     }
+
+    private String normalizeAssetType(String assetType) {
+        if (assetType == null || assetType.trim().isEmpty()) {
+            throw new ResponseStatusException(BAD_REQUEST, "assetType query param must not be blank");
+        }
+        String normalized = assetType.trim().toUpperCase(Locale.ROOT);
+        if (!SUPPORTED_ASSET_TYPES.contains(normalized)) {
+            throw new ResponseStatusException(BAD_REQUEST, "assetType must be STOCK or BOND");
+        }
+        return normalized;
+    }
+
+    private int normalizePage(Integer page) {
+        if (page == null) {
+            return 1;
+        }
+        if (page <= 0) {
+            throw new ResponseStatusException(BAD_REQUEST, "page must be greater than zero");
+        }
+        return page;
+    }
+
 }
 

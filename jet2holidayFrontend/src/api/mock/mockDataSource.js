@@ -78,6 +78,29 @@ const dayCounts = {
   '1Y': 365
 }
 
+const marketUniverse = [
+  { symbol: 'AAPL', companyName: 'Apple Inc.', assetType: 'STOCK', market: 'US', currency: 'USD' },
+  { symbol: 'MSFT', companyName: 'Microsoft Corporation', assetType: 'STOCK', market: 'US', currency: 'USD' },
+  { symbol: 'NVDA', companyName: 'NVIDIA Corporation', assetType: 'STOCK', market: 'US', currency: 'USD' },
+  { symbol: 'TSLA', companyName: 'Tesla, Inc.', assetType: 'STOCK', market: 'US', currency: 'USD' },
+  { symbol: 'AMZN', companyName: 'Amazon.com, Inc.', assetType: 'STOCK', market: 'US', currency: 'USD' },
+  { symbol: 'GOOGL', companyName: 'Alphabet Inc.', assetType: 'STOCK', market: 'US', currency: 'USD' },
+  { symbol: 'META', companyName: 'Meta Platforms, Inc.', assetType: 'STOCK', market: 'US', currency: 'USD' },
+  { symbol: '0700.HK', companyName: 'Tencent Holdings Limited', assetType: 'STOCK', market: 'HK', currency: 'HKD' },
+  { symbol: '9988.HK', companyName: 'Alibaba Group Holding Limited', assetType: 'STOCK', market: 'HK', currency: 'HKD' },
+  { symbol: '600519.SS', companyName: 'Kweichow Moutai Co., Ltd.', assetType: 'STOCK', market: 'CN', currency: 'CNY' },
+  { symbol: '000001.SZ', companyName: 'Ping An Bank Co., Ltd.', assetType: 'STOCK', market: 'CN', currency: 'CNY' },
+  { symbol: '300750.SZ', companyName: 'Contemporary Amperex Technology Co., Limited', assetType: 'STOCK', market: 'CN', currency: 'CNY' },
+  { symbol: 'AGG', companyName: 'iShares Core U.S. Aggregate Bond ETF', assetType: 'BOND', market: 'US', currency: 'USD' },
+  { symbol: 'BND', companyName: 'Vanguard Total Bond Market ETF', assetType: 'BOND', market: 'US', currency: 'USD' },
+  { symbol: 'LQD', companyName: 'iShares iBoxx $ Investment Grade Corporate Bond ETF', assetType: 'BOND', market: 'US', currency: 'USD' },
+  { symbol: 'TLT', companyName: 'iShares 20+ Year Treasury Bond ETF', assetType: 'BOND', market: 'US', currency: 'USD' },
+  { symbol: 'IEF', companyName: 'iShares 7-10 Year Treasury Bond ETF', assetType: 'BOND', market: 'US', currency: 'USD' },
+  { symbol: 'HYG', companyName: 'iShares iBoxx $ High Yield Corporate Bond ETF', assetType: 'BOND', market: 'US', currency: 'USD' },
+  { symbol: '511010.SS', companyName: 'SSE Government Bond ETF', assetType: 'BOND', market: 'CN', currency: 'CNY' },
+  { symbol: '2821.HK', companyName: 'iShares Core Hong Kong Bond ETF', assetType: 'BOND', market: 'HK', currency: 'HKD' }
+]
+
 const round4 = (value) => Number(value.toFixed(4))
 
 // Enrich base holdings with price-dependent fields expected by dashboard tables.
@@ -304,14 +327,41 @@ export const mockGetLatestMarketData = async (symbols = []) => {
   return symbols
     .map((rawSymbol) => `${rawSymbol || ''}`.trim().toUpperCase())
     .filter(Boolean)
-    .filter((symbol) => symbol in state.prices)
     .map((symbol) => ({
       symbol,
       snapshotDate,
-      currentPrice: round4(Number(state.prices[symbol])),
+      currentPrice: round4(Number(state.prices[symbol] ?? (symbol.length * 7.13))),
       currency: 'USD',
       source: 'MOCK'
     }))
+}
+
+export const mockGetMarketInstruments = async (assetType = 'STOCK', page = 1) => {
+  await delay()
+  const normalizedAssetType = `${assetType || ''}`.trim().toUpperCase()
+  const normalizedPage = Math.max(1, Number(page) || 1)
+  const pageSize = 15
+
+  const filtered = marketUniverse.filter((item) => item.assetType === normalizedAssetType)
+  const total = filtered.length
+  const totalPages = total === 0 ? 0 : Math.ceil(total / pageSize)
+  const fromIndex = Math.min((normalizedPage - 1) * pageSize, total)
+  const toIndex = Math.min(fromIndex + pageSize, total)
+  const items = filtered.slice(fromIndex, toIndex).map((item) => ({
+    symbol: item.symbol,
+    companyName: item.companyName,
+    assetType: item.assetType,
+    market: item.market,
+    currency: item.currency
+  }))
+
+  return {
+    page: normalizedPage,
+    size: pageSize,
+    total,
+    totalPages,
+    items
+  }
 }
 
 const normalizeRange = (range = '1M') => (dayCounts[range] ? range : '1M')

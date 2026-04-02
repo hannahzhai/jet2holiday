@@ -10,7 +10,8 @@ const route = useRoute()
 
 const navLinks = [
   { to: '/dashboard', label: 'Dashboard' },
-  { to: '/holdings', label: 'Holdings' }
+  { to: '/holdings', label: 'Holdings' },
+  { to: '/market', label: 'Market' }
 ]
 
 const sidebarClass = computed(() => ['sidebar', props.open ? 'open' : ''])

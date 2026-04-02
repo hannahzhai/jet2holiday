@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import org.group.jet2holiday.dto.marketdata.LatestMarketDataResponse;
+import org.group.jet2holiday.dto.marketdata.MarketInstrumentPageResponse;
 import org.group.jet2holiday.dto.marketdata.MarketDataRefreshResponse;
 import org.group.jet2holiday.service.MarketDataService;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,6 +87,17 @@ class MarketDataControllerTest {
 
         assertEquals(2, result.getRefreshedCount());
         verify(marketDataService).refreshAllHoldingsMarketData();
+    }
+
+    @Test
+    void getMarketInstruments_DelegatesToService() {
+        MarketInstrumentPageResponse expected = new MarketInstrumentPageResponse(1, 15, 20, 2, List.of());
+        when(marketDataService.getMarketInstruments("STOCK", 1)).thenReturn(expected);
+
+        MarketInstrumentPageResponse result = marketDataController.getMarketInstruments("STOCK", 1);
+
+        assertEquals(15, result.getSize());
+        verify(marketDataService).getMarketInstruments("STOCK", 1);
     }
 }
 
